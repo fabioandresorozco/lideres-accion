@@ -50,5 +50,5 @@ Para salir DEV
 Comando para hacer el PWA 
 
 ng add @angular/pwa
-
+deploy
 

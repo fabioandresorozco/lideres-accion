@@ -5,12 +5,12 @@ import { TitleComponent } from '../../../../shared/components/atoms/title/title.
 import { CardAprobacionComponent } from '../../../../shared/components/cards/card-aprobacion/card-aprobacion.component';
 import { MgPaginatorComponent, PageEvent } from '../../../../shared/components/modules/paginator/paginator.component';
 import { PerfilService } from '../../../../shared/services/perfil/perfil.service';
-import { TestigoService } from '../../../../shared/services/testigo/testigo.service';
 import { DialogNotificationComponent } from '../../../../shared/dialogs/dialog-notification/dialog-nofication.component';
 import { PerfilModel } from '../../../../../models/perfil/perfil.model';
-import { TestigoModel } from '../../../../../models/testigo/testigo.model';
 import { BaseModel } from '../../../../../models/base/base.model';
 import { DialogAsignarPuestoMesaComponent } from './dialog-asignar-puesto-mesa/dialog-asignar-puesto-mesa.component';
+import { PuestoVotacionService } from '../../../../shared/services/puesto-votacion/puesto-votacion.service';
+import { PuestoVotacionModel } from '../../../../../models/puesto-votacion/puesto-votacion.model';
 import { DialogGestionTestigosComponent } from './dialog-gestion-testigos/dialog-gestion-testigos.component';
 
 @Component({
@@ -30,15 +30,18 @@ export class ActivarTestigoComponent implements OnInit {
     existingTestigosIds: Set<string> = new Set();
     pageSize: number = 5;
     pageIndex: number = 0;
+    puestosVotacion: BaseModel<PuestoVotacionModel>[] = [];
+    puestosVotacionMap: Map<string, string> = new Map();
 
     constructor(
         private readonly perfilService: PerfilService,
-        private readonly testigoService: TestigoService,
-        private readonly dialog: MatDialog
+        private readonly dialog: MatDialog,
+        private readonly puestoVotacionService: PuestoVotacionService
     ) { }
 
     ngOnInit(): void {
         this.loadData();
+        this.loadPuestosVotacion();
     }
 
     loadData() {
@@ -46,10 +49,28 @@ export class ActivarTestigoComponent implements OnInit {
             this.testigos = perfiles;
             this.updatePagination();
         });
+    }
 
-        this.testigoService.getAllTestigos().subscribe((witnesses) => {
-            this.existingTestigosIds = new Set(witnesses.map((w) => w.id!));
+    loadPuestosVotacion() {
+        this.puestoVotacionService.getPuestosVotacion().subscribe((puestos) => {
+            this.puestosVotacion = puestos;
+            this.puestosVotacionMap.clear();
+            puestos.forEach(p => {
+                if (p.id) {
+                    this.puestosVotacionMap.set(p.id, p.data.nombre);
+                }
+            });
         });
+    }
+
+    getPuestoVotacionName(id?: string | null): string {
+        if (!id) return 'Sin asignar';
+        return this.puestosVotacionMap.get(id) || 'Sin asignar';
+    }
+
+    searchNamePueto(name: string) {
+        const result = this.puestosVotacion.filter((puesto) => puesto.data.nombre.toLowerCase().includes(name.toLowerCase()));
+        return result.length > 0 ? result[0].data.nombre : 'Sin asignar';
     }
 
     updatePagination() {
@@ -73,47 +94,28 @@ export class ActivarTestigoComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe(async (result) => {
-                if (result) {
-                    const testigoData: TestigoModel = {
-                        nombre: perfil.nombres,
-                        apellido: perfil.apellidos,
-                        celular: perfil.celular,
-                        mesa: result.mesa,
-                        uidLider: result.puestoId,
-                    };
-
-                    const baseData: BaseModel<TestigoModel> = {
-                        data: testigoData,
-                        fechaCreacion: new Date().toISOString(),
-                        creadoPor: 'system',
-                    };
-
-                    try {
-                        if (perfil.id) {
-                            await this.testigoService.crearTestigo(baseData, perfil.id);
-                            await this.perfilService.updatePerfil(perfil.id, { puestoVotacionResponsableId: result.puestoId } as any);
-                            this.existingTestigosIds.add(perfil.id);
-                            perfil.puestoVotacionResponsableId = result.puestoId;
-                            this.dialog.open(DialogNotificationComponent, {
-                                data: {
-                                    title: 'Éxito',
-                                    message: 'Coordinador activado correctamente',
-                                    bottons: 'Aceptar',
-                                    type: 'success',
-                                },
-                            });
-                        }
-                    } catch (error) {
-                        this.dialog.open(DialogNotificationComponent, {
-                            data: {
-                                title: 'Error',
-                                message: 'Error al activar coordinador',
-                                bottons: 'Aceptar',
-                                type: 'error',
-                            },
-                        });
-                    }
+                console.log(result);
+                try {
+                    await this.perfilService.updatePerfil(perfil.id!, { puestoVotacionResponsableId: result.puestodevotacion } as any);
+                    this.dialog.open(DialogNotificationComponent, {
+                        data: {
+                            title: 'Éxito',
+                            message: 'Testigo activado correctamente',
+                            bottons: 'Aceptar',
+                            type: 'success',
+                        },
+                    });
+                } catch (error) {
+                    this.dialog.open(DialogNotificationComponent, {
+                        data: {
+                            title: 'Error',
+                            message: 'Error al activar puesto de votación',
+                            bottons: 'Aceptar',
+                            type: 'error',
+                        },
+                    });
                 }
+
             });
         } else {
             const dialogRef = this.dialog.open(DialogNotificationComponent, {
@@ -129,10 +131,7 @@ export class ActivarTestigoComponent implements OnInit {
                 if (result) {
                     try {
                         if (perfil.id) {
-                            await this.testigoService.deleteTestigo(perfil.id);
-                            await this.perfilService.updatePerfil(perfil.id, { puestoVotacionResponsableId: null } as any);
-                            this.existingTestigosIds.delete(perfil.id);
-                            perfil.puestoVotacionResponsableId = null;
+                            await this.perfilService.updatePerfil(perfil.id, { puestoVotacionResponsableId: '' } as any);
                             this.dialog.open(DialogNotificationComponent, {
                                 data: {
                                     title: 'Éxito',

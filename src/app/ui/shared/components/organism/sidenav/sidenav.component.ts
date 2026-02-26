@@ -57,7 +57,6 @@ export class SidenavComponent {
             // Specific coordinator roles that override postulado requirement
             if (requiresPostulacion === 'transporte' && this.usuario.coordinadorTransporte) return true;
             if (requiresPostulacion === 'casaApoyo' && this.usuario.coordinadorCasaApoyo) return true;
-            if (requiresPostulacion === 'testigo' && this.usuario.administradorTestigos) return true;
 
             if (!this.usuario.postulado) return false;
             return (this.usuario.postulado as any)[requiresPostulacion] === true;
@@ -95,7 +94,7 @@ export class SidenavComponent {
                 }
                 break;
             case 'testigo':
-                if (this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' || this.usuario.rol === 'Coordinador de iglesia' || this.usuario.administradorTestigos) {
+                if (this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario') {
                     this.dialog.open(DialogTestigosComponent, {
                         data: { name: 'mi-testigos' },
                         width: '300px',

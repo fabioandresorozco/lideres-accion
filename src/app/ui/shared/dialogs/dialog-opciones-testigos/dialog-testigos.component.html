@@ -2,17 +2,12 @@
 <mat-dialog-content>
   <p class="text-center font-primary">Seleccione la opcion que desea</p>
 </mat-dialog-content>
-<mat-dialog-actions class="w-full flex flex-col gap-4">
-  <mg-button mat-dialog-close size="big" text="Líderes de testigos" class="w-full" icon="person_add"
-    routerLink="/private/activar-testigo"></mg-button>
+<mat-dialog-actions class="w-full flex flex-col gap-4 !px-4 !pb-6">
+  <mg-button size="big" text="Líderes de testigos" class="w-full" icon="person_add"
+    routerLink="/private/activar-testigo" (click)="dialogRef.close()"></mg-button>
 
-  @if(this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' || this.usuario.rol === 'Coordinador de iglesia' || this.usuario.administradorTestigos) {
-  <mg-button mat-dialog-close size="big" text="Listar testigos" class="w-full" icon="list"
-    routerLink="/private/listar-testigos"></mg-button>
-  <mg-button mat-dialog-close size="big" text="Enviar Resultados" class="w-full" icon="how_to_vote"
-    routerLink="/private/enviar-resultados-votacion"></mg-button>
-  }
+  <mg-button size="big" text="Ver Resultados de Votación" class="w-full" icon="analytics" variant="primary"
+    (onClick)="openVerResultados()"></mg-button>
 
-
-  <button mat-button (click)="onNoClick()">Cerrar</button>
+  <button mat-button (click)="onNoClick()" class="!rounded-full mt-2">Cerrar</button>
 </mat-dialog-actions>

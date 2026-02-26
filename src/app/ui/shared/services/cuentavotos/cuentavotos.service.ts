@@ -61,13 +61,30 @@ export class CuentavotosService {
      * @returns Observable con los registros
      */
     getCuentavotosByPuestoYMesa(
-        puesto: string,
-        mesa: string
+        puestoVotacionId: string,
+        mesaVotacion: number
     ): Observable<BaseModel<CuentavotosModel>[]> {
         const q = query(
             collection(this.firestore, this._collection),
-            where('data.puestoVotacion', '==', puesto),
-            where('data.mesaVotacion', '==', mesa)
+            where('data.puestoVotacionId', '==', puestoVotacionId),
+            where('data.mesaVotacion', '==', mesaVotacion)
+        );
+        return collectionData(q, { idField: 'id' }) as Observable<
+            BaseModel<CuentavotosModel>[]
+        >;
+    }
+
+    /**
+     * Obtener cuentavotos por puesto de votación
+     * @param puestoVotacionId - ID del puesto de votación
+     * @returns Observable con los registros
+     */
+    getCuentavotosByPuesto(
+        puestoVotacionId: string
+    ): Observable<BaseModel<CuentavotosModel>[]> {
+        const q = query(
+            collection(this.firestore, this._collection),
+            where('data.puestoVotacionId', '==', puestoVotacionId)
         );
         return collectionData(q, { idField: 'id' }) as Observable<
             BaseModel<CuentavotosModel>[]

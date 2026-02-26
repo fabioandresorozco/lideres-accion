@@ -11,7 +11,7 @@
     [goTo]="'./home'"></app-button-footer>
 
   <app-button-footer
-    *ngIf="usuario.rol == 'Super usuario' || usuario.rol == 'Pastor' || usuario.coordinadorCasaApoyo || usuario.coordinadorTransporte || usuario.administradorTestigos "
+    *ngIf="usuario.rol == 'Super usuario' || usuario.rol == 'Pastor' || usuario.coordinadorCasaApoyo || usuario.coordinadorTransporte "
     class="flex-1 min-w-[80px] flex justify-center" [option]="'Asociar'" [icon]="'assignment_ind'" [goTo]="$any(null)"
     (click)="openAsociarIglesia()"></app-button-footer>
 

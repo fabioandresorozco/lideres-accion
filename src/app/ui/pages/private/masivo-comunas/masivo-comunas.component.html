@@ -13,7 +13,7 @@
         </span>
 
         <p class="mb-2 text-sm text-gray-500">
-            <span class="font-semibold text-center">Haz clic para subir archivo Comunas/Barrios</span>
+            <span class="font-semibold text-center">Haz clic para subir el archivo Comunas/Barrios</span>
         </p>
         <p class="text-xs text-gray-500">Debes utilizar la plantilla y seleccionar una iglesia</p>
     </div>
@@ -29,13 +29,13 @@
 </div>
 
 <div class="sm:block lg:hidden">
-    <app-container-alert-information type="warning" title="Atención!">
-        Este funcionalidad es de uso exclusivo para computadores.
+    <app-container-alert-information type="warning" title="¡Atención!">
+        Esta funcionalidad es de uso exclusivo para computadores.
     </app-container-alert-information>
 </div>
 
 <div *ngIf="comunas.length > 0" class="flex gap-4 mb-2">
-    <span>Total registros: {{ comunas.length }}</span>
+    <span>Total de registros: {{ comunas.length }}</span>
     <span>Guardados: {{ contador }}</span>
 </div>
 

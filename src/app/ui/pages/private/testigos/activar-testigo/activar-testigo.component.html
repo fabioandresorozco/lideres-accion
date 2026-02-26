@@ -2,7 +2,8 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
     @for (t of paginatedTestigos; track t.id) {
-    <app-card-aprobacion [title]="t.nombres" [subtitle]="t.apellidos" [date]="t.celular || ''" [checked]="isChecked(t)"
+    <app-card-aprobacion [title]="t.nombres" [subtitle]="t.apellidos"
+        [date]="getPuestoVotacionName(t.puestoVotacionResponsableId)" [checked]="isChecked(t)"
         (checkedChange)="aprobarTestigo(t, $event)" [photoUrl]="t.foto" [phoneNumber]="t.celular || ''"
         [showAddWitnessAction]="true" (addWitnessAction)="openGestionWitnessDialog(t)"></app-card-aprobacion>
     }

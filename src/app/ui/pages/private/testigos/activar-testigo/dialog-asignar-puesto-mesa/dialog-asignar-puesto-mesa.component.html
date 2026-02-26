@@ -8,12 +8,6 @@
             [showAlert]="!!(form.get('puestodevotacion')?.invalid && form.get('puestodevotacion')?.touched)">
         </mg-input-select>
 
-        <mg-input-text label="Mesa de votación" [placeholder]="'Ingrese mesa (1-' + maxMesas + ')'" type="number"
-            [min]="1" [max]="maxMesas" [formControlName]="'mesadevotacion'" [required]="true"
-            [textError]="form.get('mesadevotacion')?.hasError('required') ? 'La mesa es obligatoria' : 
-                         form.get('mesadevotacion')?.hasError('min') || form.get('mesadevotacion')?.hasError('max') ? 'Debe ser entre 1 y ' + maxMesas : ''">
-        </mg-input-text>
-
         <div class="flex gap-4 justify-end mt-4">
             <mg-button type="reset" text="Cancelar" (onClick)="close()"></mg-button>
             <mg-button type="submit" text="Guardar" [disabled]="form.invalid"></mg-button>

@@ -2,15 +2,15 @@
   <mg-title title="Mi casa de apoyo"></mg-title>
 
   <div class="flex items-center justify-center">
-    <span *ngIf="usuario.iglesia" class="w-full text-center text-lg text-black font-primary">Tu seras el responsable de
+    <span *ngIf="usuario.iglesia" class="w-full text-center text-lg text-black font-primary">Tú serás el responsable de
       la casa de apoyo</span>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
 
-    <app-container-alert-information *ngIf="!usuario.iglesia" [type]="'warning'" [title]="'Atención'">
-      No puedes guardar aun tu casa de apoyo hasta que un coordinador te socie a una ZONA, habla con el coordinador de
-      zona
+    <app-container-alert-information *ngIf="!usuario.iglesia" [type]="'warning'" [title]="'¡Atención!'">
+      No puedes guardar aún tu casa de apoyo hasta que un coordinador te asocie a una zona. Habla con el coordinador de
+      zona.
     </app-container-alert-information>
 
     <mg-input-text label="Barrio" formControlName="barrio" placeholder="Nombre del barrio" [required]="true">
@@ -20,7 +20,7 @@
     </mg-input-text>
 
     <div class="flex items-center justify-center">
-      <span class="w-full text-center text-lg text-black font-primary">Sí eres el dueño, deja tus datos, sino el dueño o
+      <span class="w-full text-center text-lg text-black font-primary">Si eres el dueño, deja tus datos; si no, los del dueño o
         habitante de la casa</span>
     </div>
 

@@ -1,6 +1,6 @@
 export interface CuentavotosModel {
-    puestoVotacion: string;
-    mesaVotacion: string;
-    senado: number; // votos para senado
-    camara: number; // votos para cámara
+    puestoVotacionId: string;
+    mesaVotacion: number;
+    senado: number;
+    camara: number;
 }

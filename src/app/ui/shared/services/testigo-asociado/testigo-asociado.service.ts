@@ -11,13 +11,13 @@ import {
     where,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../../environment';
 import { BaseModel } from '../../../../models/base/base.model';
 import { TestigoModel } from '../../../../models/testigo/testigo.model';
+import { environment } from '../../../../../environment';
 
 @Injectable({ providedIn: 'root' })
 export class TestigoAsociadoService {
-    _collection: string = environment.collections.testigosAsociados;
+    _collection: string = environment.collections.testigos;
 
     constructor(private readonly firestore: Firestore) { }
 
@@ -34,7 +34,7 @@ export class TestigoAsociadoService {
     ): Observable<BaseModel<TestigoModel>[]> {
         const q = query(
             collection(this.firestore, this._collection),
-            where('data.coordinadorId', '==', coordinadorId)
+            where('data.uidLider', '==', coordinadorId)
         );
         return collectionData(q, { idField: 'id' }) as Observable<any[]>;
     }

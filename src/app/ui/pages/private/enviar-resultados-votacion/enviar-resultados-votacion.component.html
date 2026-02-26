@@ -1,78 +1,101 @@
-<div class="container mx-auto p-4 max-w-lg">
-    <mat-card class="p-6">
-        <mat-card-header>
-            <mat-card-title class="text-2xl font-bold mb-4 w-full text-center">
-                Reportar Resultados de Votación
-            </mat-card-title>
-        </mat-card-header>
+<div class="p-2 bg-white rounded-lg max-w-lg w-full mx-auto relative">
+    <!-- Cabecera -->
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+            <mat-icon class="text-blue-600">how_to_vote</mat-icon>
+            Reportar Resultados
+        </h2>
+        <button mat-icon-button (click)="cancelar()" class="text-gray-500 hover:text-gray-700">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
 
-        <mat-card-content>
-            <!-- Paso 1: Loading State -->
-            <div *ngIf="loading && !testigoEncontrado" class="flex flex-col items-center justify-center py-10">
-                <mat-icon class="spinner animate-spin text-blue-500 text-6xl h-16 w-16 mb-4">autorenew</mat-icon>
-                <p class="text-gray-600 font-medium">Verificando asignación de testigo...</p>
+    <!-- Info del Puesto -->
+    <div class="mb-4 text-center">
+        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Puesto de Votación</p>
+        <p class="text-lg font-bold text-primary">{{ data.puestoNombre }}</p>
+    </div>
+
+    <!-- Formulario -->
+    <div class="bg-blue-50 p-4 rounded-xl mb-6 shadow-inner border border-blue-100">
+        <p class="mb-4 text-sm font-bold text-blue-800 flex items-center gap-2">
+            <mat-icon class="text-xs scale-75">add_circle</mat-icon>
+            REGISTRAR NUEVA MESA
+        </p>
+
+        <form [formGroup]="form" class="flex flex-col gap-4">
+            <mg-input-text label="Mesa de votación" placeholder="Ingrese número de mesa" [formControlName]="'mesa'"
+                [required]="true" [type]="'text'"></mg-input-text>
+
+            <div class="grid grid-cols-2 gap-4">
+                <mg-input-text label="Votos Senado" placeholder="0" [formControlName]="'senado'" [required]="true"
+                    [type]="'text'" [min]="0"></mg-input-text>
+
+                <mg-input-text label="Votos Cámara" placeholder="0" [formControlName]="'camara'" [required]="true"
+                    [type]="'text'" [min]="0"></mg-input-text>
             </div>
 
-            <!-- Paso 2: Confirmar y Enviar Resultados -->
-            <div *ngIf="testigoEncontrado && !envioExitoso">
-                <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-200">
-                    <h3 class="font-bold text-blue-800 mb-2">Información del Testigo</h3>
-                    <!-- Check for null safely with optional chaining in template or relying on *ngIf="testigoEncontrado" which implies existence. 
-                         Ideally testigoEncontrado has the structure { id: string, data: TestigoModel } 
-                    -->
-                    <p><span class="font-semibold">Nombre:</span> {{ testigoEncontrado.data?.nombre }} {{
-                        testigoEncontrado.data?.apellido }}</p>
-                    <p><span class="font-semibold">Puesto:</span> {{ testigoEncontrado.data?.puestodevotacion }}</p>
+            <mg-button [loading]="loading" class="w-full mt-2" text="Registrar Mesa" icon="save"
+                (click)="enviarResultados()"></mg-button>
+        </form>
+    </div>
 
-                    <div class="flex items-center gap-2">
-                        <span class="font-semibold">Mesa:</span>
+    <!-- Listado de mesas reportadas -->
+    <div class="mt-4">
+        <div class="flex items-center justify-between mb-3 px-1">
+            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                <mat-icon class="text-green-600">checklist</mat-icon>
+                Mesas Reportadas
+            </h3>
+            <span
+                class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-green-200">
+                {{ misResultados.length }}
+            </span>
+        </div>
 
-                        <div *ngIf="!editingMesa" class="flex items-center gap-2">
-                            <span>{{ form.get('mesa')?.value || testigoEncontrado.data?.mesadevotacion }}</span>
-                            <mat-icon (click)="toggleEditMesa()" class="text-blue text-xs font-bold">edit_note</mat-icon>
+        <!-- Loader para la lista -->
+        <div *ngIf="loading && misResultados.length === 0" class="flex flex-col items-center justify-center py-8">
+            <mat-icon class="animate-spin text-blue-400 mb-2">autorenew</mat-icon>
+            <p class="text-xs text-gray-500">Cargando reportes...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="misResultados.length === 0 && !loading"
+            class="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+            <mat-icon class="text-gray-300 text-4xl mb-2">ballot</mat-icon>
+            <p class="text-gray-400 text-sm">Aún no hay mesas reportadas para este puesto</p>
+        </div>
+
+        <!-- Lista Scrollable -->
+        <div class="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar pb-2">
+            <div *ngFor="let item of misResultados"
+                class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-green-500">
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-black text-gray-900 text-lg">Mesa {{ item.data.mesaVotacion }}</span>
+                        <mat-icon class="text-green-500 text-xs scale-75">verified</mat-icon>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase">Senado</span>
+                            <span class="font-bold text-blue-600">{{ item.data.senado }}</span>
                         </div>
-
-                        <div *ngIf="editingMesa" class="flex items-center gap-2" [formGroup]="form">
-                            <mat-form-field appearance="outline" class="w-24 -mb-5 density-compact">
-                                <input matInput formControlName="mesa" type="text">
-                            </mat-form-field>
-                            <mat-icon (click)="toggleEditMesa()" class="text-blue text-xs font-bold">check</mat-icon>
+                        <div class="flex flex-col border-l border-gray-100 pl-4">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase">Cámara</span>
+                            <span class="font-bold text-red-600">{{ item.data.camara }}</span>
                         </div>
                     </div>
                 </div>
-
-                <p class="mb-4 font-medium">Ingrese la cantidad de votos obtenidos:</p>
-
-                <form [formGroup]="form" (ngSubmit)="enviarResultados()" class="flex flex-col gap-4">
-                    <mg-input-text label="Votos SENADO" placeholder="0" [formControlName]="'senado'" [required]="true"
-                        [type]="'number'" [min]="0"></mg-input-text>
-
-                    <mg-input-text label="Votos CÁMARA" placeholder="0" [formControlName]="'camara'" [required]="true"
-                        [type]="'number'" [min]="0"></mg-input-text>
-
-                    <div class="flex flex-col gap-3 mt-4">
-                        <mg-button [loading]="loading" class="w-full" text="Enviar Resultados" icon="send"
-                            (click)="enviarResultados()"></mg-button>
-                    </div>
-                </form>
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] text-gray-400 italic">Reportado</span>
+                    <span class="text-[10px] text-gray-500">{{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Paso 3: Confirmación de Éxito -->
-            <div *ngIf="envioExitoso" class="text-center py-6">
-                <mat-icon class="text-green-500 text-6xl h-16 w-16 mb-4">check_circle</mat-icon>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">¡Resultados Enviados!</h3>
-                <p class="text-gray-600 mb-6">
-                    La información ha sido registrada exitosamente en el sistema.
-                </p>
-
-                <mg-button class="w-full" text="Reportar Nuevo Resultado" icon="add_circle"
-                    (click)="resetForm()"></mg-button>
-
-                <button mat-button class="w-full mt-4" (click)="cancelar()">
-                    Volver al Inicio
-                </button>
-            </div>
-
-        </mat-card-content>
-    </mat-card>
+    <!-- Acciones Finales -->
+    <div class="flex justify-center mt-6 pt-4 border-t border-gray-100">
+        <mg-button text="Finalizar / Cerrar" variant="secondary" size="big" (onClick)="cancelar()"></mg-button>
+    </div>
 </div>

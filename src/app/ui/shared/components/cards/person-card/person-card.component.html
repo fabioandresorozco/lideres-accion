@@ -34,14 +34,10 @@
 
         <!-- Sub Roles Codes (Coordinadores) -->
         <div class="flex flex-wrap gap-1 mt-1 pl-6"
-          *ngIf="person.coordinadorTransporte || person.administradorTestigos || person.coordinadorCasaApoyo">
+          *ngIf="person.coordinadorTransporte || person.coordinadorCasaApoyo">
           <span *ngIf="person.coordinadorTransporte"
             class="bg-blue-50 text-blue-600 border border-blue-100 text-[10px] px-2 py-0.5 rounded-full">
             Coord. Transporte
-          </span>
-          <span *ngIf="person.administradorTestigos"
-            class="text-[10px] sm:text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded-full border border-teal-200 shrink-0">
-            Admin. Testigos
           </span>
           <span *ngIf="person.coordinadorCasaApoyo"
             class="bg-orange-50 text-orange-600 border border-orange-100 text-[10px] px-2 py-0.5 rounded-full">

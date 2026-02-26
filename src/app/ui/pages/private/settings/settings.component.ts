@@ -86,7 +86,7 @@ export class SettingsComponent {
         }
         break;
       case 'testigo':
-        if (this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' || this.usuario.rol === 'Coordinador de iglesia' || this.usuario.administradorTestigos) {
+        if (this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' || this.usuario.rol === 'Coordinador de iglesia' || this.usuario.coordinadorTransporte) {
           this.dialog.open(DialogTestigosComponent, {
             data: { name: 'mi-testigos' },
             width: '300px',

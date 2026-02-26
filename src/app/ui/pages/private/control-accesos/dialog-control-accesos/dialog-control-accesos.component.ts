@@ -54,11 +54,6 @@ export class DialogControlAccesosComponent implements OnInit {
             this.roleStates['Coordinador de iglesia'] = true; // Enforce dependency
         }
 
-        if (this.data.administradorTestigos) {
-            this.roleStates['Administrador de testigos'] = true;
-            this.roleStates['Coordinador de iglesia'] = true; // Enforce dependency
-        }
-
         if (this.data.coordinadorCasaApoyo) {
             this.roleStates['Coordinador de casa de apoyo'] = true;
             this.roleStates['Coordinador de iglesia'] = true; // Enforce dependency

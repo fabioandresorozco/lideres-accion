@@ -8,8 +8,6 @@
       <div class="flex flex-col gap-1" *ngIf="usuario">
         <span *ngIf="usuario.rol" class="font-bold text-lg text-heading">{{ usuario.rol === 'Pastor' ? 'Admin zona' :
           usuario.rol }}</span>
-        <span *ngIf="usuario.administradorTestigos"
-          class="text-md bg-blue-100 text-blue-800 px-2 py-1 rounded w-fit">Administrador Testigos</span>
         <span *ngIf="usuario.coordinadorTransporte"
           class="text-md bg-green-100 text-green-800 px-2 py-1 rounded w-fit">Coordinador Transporte</span>
         <span *ngIf="usuario.coordinadorCasaApoyo"

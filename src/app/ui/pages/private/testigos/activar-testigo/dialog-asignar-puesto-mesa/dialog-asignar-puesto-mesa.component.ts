@@ -1,8 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { InputTextComponent } from '../../../../../shared/components/atoms/input-text/input-text.component';
 import { ButtonComponent } from '../../../../../shared/components/atoms/button/button.component';
 import { TitleComponent } from '../../../../../shared/components/atoms/title/title.component';
 import { PuestoVotacionService } from '../../../../../shared/services/puesto-votacion/puesto-votacion.service';
@@ -16,7 +15,6 @@ import { SelectOptionModel } from '../../../../../../models/base/select-options.
         CommonModule,
         ReactiveFormsModule,
         MatDialogModule,
-        InputTextComponent,
         ButtonComponent,
         TitleComponent,
         InputSelectComponent
@@ -24,7 +22,7 @@ import { SelectOptionModel } from '../../../../../../models/base/select-options.
     templateUrl: './dialog-asignar-puesto-mesa.component.html',
     styleUrls: ['./dialog-asignar-puesto-mesa.component.scss']
 })
-export class DialogAsignarPuestoMesaComponent {
+export class DialogAsignarPuestoMesaComponent implements OnInit {
     form: FormGroup;
     puestosOptions: SelectOptionModel<any>[] = [];
 
@@ -38,12 +36,8 @@ export class DialogAsignarPuestoMesaComponent {
     ) {
         this.form = this.fb.group({
             puestodevotacion: ['', [Validators.required]],
-            mesadevotacion: ['', [Validators.required, Validators.min(1), Validators.max(100), Validators.pattern("^[0-9]*$")]]
         });
 
-        if (this.data?.iglesiaId) {
-            this.loadPuestos(this.data.iglesiaId);
-        }
 
         this.form.get('puestodevotacion')?.valueChanges.subscribe((value) => {
             if (value && value.mesastotales) {
@@ -60,30 +54,23 @@ export class DialogAsignarPuestoMesaComponent {
         });
     }
 
-    loadPuestos(iglesiaId: string) {
-        this.puestoVotacionService.getPuestosByIglesia(iglesiaId).subscribe(puestos => {
+    ngOnInit(): void {
+            this.loadPuestos();
+    }
+
+    loadPuestos() {
+        this.puestoVotacionService.getPuestosVotacion().subscribe(puestos => {
             this.puestosOptions = puestos.map(p => ({
                 label: p.data.nombre,
-                value: { id: p.id, nombre: p.data.nombre, mesastotales: p.data.mesastotales }
+                value: p.id
             }));
         });
     }
 
     save() {
-        if (this.form.valid) {
-            const formValue = this.form.value;
-            const selectedPuesto = formValue.puestodevotacion;
+       this.dialogRef.close(this.form.value);
+       this.form.reset();
 
-            const result = {
-                puestodevotacion: selectedPuesto.nombre,
-                puestoId: selectedPuesto.id,
-                mesadevotacion: formValue.mesadevotacion
-            };
-
-            this.dialogRef.close(result);
-        } else {
-            this.form.markAllAsTouched();
-        }
     }
 
     close() {

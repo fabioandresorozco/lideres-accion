@@ -121,13 +121,13 @@ export const CARDS_HOME: CardModel[] = [
     icon: 'directions_run',
     showIf: ['Pastor', 'Super usuario', 'Coordinador de transporte', 'Coordinador de casa de apoyo'],
   },
-  // {
-  //   goTo: '',
-  //   title: 'Coordinación de testigos',
-  //   description: 'Realiza tus gestiones como testigo aquí',
-  //   icon: 'how_to_vote',
-  //   showIf: ['Todos'],
-  //   action: 'testigo',
-  //   requiresPostulacion: 'testigo'
-  // }
+  {
+    goTo: '',
+    title: 'Coordinación de testigos',
+    description: 'Realiza tus gestiones como testigo aquí',
+    icon: 'how_to_vote',
+    showIf: ['Pastor', 'Super usuario', 'Coordinador de transporte', 'Coordinador de casa de apoyo'],
+    action: 'testigo',
+    
+  }
 ];

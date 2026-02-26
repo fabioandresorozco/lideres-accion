@@ -23,12 +23,12 @@
 
 
 <div class="sm:block lg:hidden">
-  <app-container-alert-information type="warning" title="Atención!">
-    Este funcionalidad es de uso exclusivo para computadores, no recomendamos utilizarla en dispositivos móviles.
+  <app-container-alert-information type="warning" title="¡Atención!">
+    Esta funcionalidad es de uso exclusivo para computadores, no recomendamos utilizarla en dispositivos móviles.
   </app-container-alert-information>
 </div>
 <div *ngIf="referidos.length > 0" class="flex gap-4 mb-2">
-  <span>Total registros: {{ referidos.length + " referidos" }}</span>
+  <span>Total de registros: {{ referidos.length + " referidos" }}</span>
 </div>
 
 
@@ -48,7 +48,7 @@
               Nombres
             </th>
             <th scope="col" class="px-6 py-3 text-center whitespace-nowrap">
-              Célular
+              Celular
             </th>
             <th scope="col" class="px-6 py-3 text-center whitespace-nowrap">
               Correo
@@ -78,7 +78,7 @@
               Senado
             </th>
             <th scope="col" class="px-6 py-3 text-center whitespace-nowrap">
-              Camara
+              Cámara
             </th>
             <th scope="col" class="px-6 py-3 text-center whitespace-nowrap">
               Referido por
@@ -130,7 +130,7 @@
               {{ referido.senado ? "SI" : "NO" }}
             </td>
             <td class="px-6 py-4 text-center whitespace-nowrap text-black">
-              {{ referido.camara ? "SI" : "NO" }}
+              {{ referido.camara ? "Sí" : "No" }}
             </td>
             <td class="px-6 py-4 text-center whitespace-nowrap text-black">
               {{ referido.referidoPor }}

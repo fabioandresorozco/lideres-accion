@@ -147,21 +147,19 @@
 
                     <div class="flex flex-col gap-2 mt-2">
                         <div *ngFor="let testigo of misTestigos"
-                            class="flex flex-col bg-white p-2 rounded border border-gray-100 shadow-sm">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-700">{{ testigo.data.nombre }} {{
-                                        testigo.data.apellido }}
-                                    </p>
-                                    <p class="text-xs text-gray-500">Mesa: {{ testigo.data }}</p>
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <mg-icon-whatsapp *ngIf="testigo.data.celular" [phone]="testigo.data.celular"
-                                        size="small"></mg-icon-whatsapp>
-                                    <mg-icon-button *ngIf="testigo.data.celular" icon="call"
-                                        [link]="'tel:' + testigo.data.celular" variant="primary"
-                                        size="small"></mg-icon-button>
-                                </div>
+                            class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                            <div>
+                                <p class="font-medium text-sm text-gray-900">{{ testigo.data.nombre }} {{
+                                    testigo.data.apellido }}
+                                </p>
+                                <p class="text-xs text-gray-500">Mesa: {{ testigo.data.mesa }}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <mg-icon-whatsapp *ngIf="testigo.data.celular" [phone]="testigo.data.celular"
+                                    size="small"></mg-icon-whatsapp>
+                                <mg-icon-button *ngIf="testigo.data.celular" icon="call"
+                                    [link]="'tel:' + testigo.data.celular" variant="primary"
+                                    size="small"></mg-icon-button>
                             </div>
                         </div>
                     </div>

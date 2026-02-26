@@ -71,10 +71,6 @@ export const routes: Routes = [
         loadComponent: () => import('./testigos/activar-testigo/activar-testigo.component').then(m => m.ActivarTestigoComponent),
       },
       {
-        path: 'listar-testigos',
-        loadComponent: () => import('./testigos/listar-testigos/listar-testigos.component').then(m => m.ListarTestigosComponent),
-      },
-      {
         path: 'estadisticas',
         loadComponent: () => import('./estadisticas/estadisticas.component').then(m => m.EstadisticasComponent),
       },
@@ -114,10 +110,7 @@ export const routes: Routes = [
         path: 'listar-voluntarios',
         loadComponent: () => import('./listar-voluntarios/listar-voluntarios.component').then(m => m.ListarVoluntariosComponent),
       },
-      {
-        path: 'enviar-resultados-votacion',
-        loadComponent: () => import('./enviar-resultados-votacion/enviar-resultados-votacion.component').then(m => m.EnviarResultadosVotacionComponent),
-      },
+
       {
         path: 'listar-carreras',
         loadComponent: () => import('./listar-carreras/listar-carreras.component').then(m => m.ListarCarrerasComponent),

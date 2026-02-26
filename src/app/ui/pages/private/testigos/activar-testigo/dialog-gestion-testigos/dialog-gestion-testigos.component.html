@@ -1,6 +1,7 @@
 <div class="p-4 max-w-2xl w-full mx-auto">
     <div class="flex justify-between items-center mb-4">
-        <mg-title [title]="'Testigos de ' + data.coordinador.nombres"></mg-title>
+        <mg-title
+            [title]="'Testigos de ' + data.coordinador.nombres + ' (' + getPuestoVotacionName(data.coordinador.puestoVotacionResponsableId) + ')'"></mg-title>
         <button mat-icon-button (click)="close()" class="text-gray-500 hover:text-gray-700">
             <mat-icon>close</mat-icon>
         </button>
@@ -14,10 +15,10 @@
                 <mg-input-text type="text" formControlName="nombre" label="Nombre" id="nombre"></mg-input-text>
                 <mg-input-text type="text" formControlName="apellido" label="Apellido" id="apellido"></mg-input-text>
             </div>
-            <mg-input-text type="text" formControlName="celular" label="Celular" id="celular"
-                [maxlength]="10" [minlength]="10" [textError]="textErrormsn()"></mg-input-text>
+            <mg-input-text type="text" formControlName="celular" label="Celular" id="celular" [maxlength]="10"
+                [minlength]="10" [textError]="textErrormsn()"></mg-input-text>
             <mg-input-text type="text" formControlName="mesa" label="Mesa" id="mesa"
-         [textError]="textErrormsnMesa()"></mg-input-text>
+                [textError]="textErrormsnMesa()"></mg-input-text>
 
             <div class="flex justify-end">
                 <mg-button text="Agregar" size="small" type="submit" [loading]="loading"
@@ -30,12 +31,13 @@
     <div class="max-h-[300px] overflow-y-auto pr-1">
         <h4 class="text-sm font-semibold text-gray-700 mb-3">Listado Actual</h4>
         <div class="flex flex-col gap-2">
-            @for (testigo of testigos$ | async; track testigo.id) {
+            @for (testigo of testigos; track testigo.id) {
             <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
                 <div>
                     <p class="font-medium text-sm text-gray-900">{{ testigo.data.nombre }} {{ testigo.data.apellido }}
                     </p>
                     <p class="text-xs text-gray-500">Cel: {{ testigo.data.celular }}</p>
+                    <p class="text-xs text-gray-500">Mesa: {{ testigo.data.mesa }}</p>
                 </div>
                 <button (click)="testigo.id && deleteTestigo(testigo.id)"
                     class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"

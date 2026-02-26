@@ -97,7 +97,6 @@ export class ControlAccesosComponent implements OnInit {
           (user) =>
             user.rol ||
             user.coordinadorCasaApoyo ||
-            user.administradorTestigos ||
             user.coordinadorTransporte
         );
       },
@@ -111,7 +110,6 @@ export class ControlAccesosComponent implements OnInit {
           (user) =>
             user.rol ||
             user.coordinadorCasaApoyo ||
-            user.administradorTestigos ||
             user.coordinadorTransporte
         );
       },

@@ -13,7 +13,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CardInfoComponent } from '../../../shared/components/cards/card-info/card-info.component';
 import { TitleComponent } from '../../../shared/components/atoms/title/title.component';
 import { ToastrService } from 'ngx-toastr';
-import { TestigoService } from '../../../shared/services/testigo/testigo.service';
 import { VehiculoService } from '../../../shared/services/vehiculo/vehiculo.service';
 import { CasaApoyoService } from '../../../shared/services/casa-apoyo/casa-apoyo.service';
 import { firstValueFrom } from 'rxjs';
@@ -63,7 +62,6 @@ export class ListarVoluntariosComponent implements AfterViewInit {
     constructor(
         private perfilService: PerfilService,
         private toast: ToastrService,
-        private testigoService: TestigoService,
         private vehiculoService: VehiculoService,
         private casaApoyoService: CasaApoyoService,
         private dialog: MatDialog
@@ -172,17 +170,6 @@ export class ListarVoluntariosComponent implements AfterViewInit {
                         await this.casaApoyoService.deleteCasaApoyo(casa.id);
                     }
                 }
-            }
-
-            // 3. Delete Testigo record (if exists, usually ID matches User ID)
-            try {
-                // We attempt even if we are not sure it exists, deleteDoc handles it.
-                // Or check existence first? deleteDoc is idempotent if it doesn't exist? 
-                // Firestore delete non-existing document is success.
-                await this.testigoService.deleteTestigo(id);
-            } catch (e) {
-                // Ignore if not exists or error, but logging is good
-                console.log('Testigo not found or error deleting', e);
             }
 
             // 4. Delete Profile

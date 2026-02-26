@@ -40,7 +40,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   private vehiculoSubscription: Subscription | undefined;
   currentVehiculo: VehiculoModel | null = null;
   isCasaApoyoApproved: boolean = false;
-  proyect: string = environment.firebase.projectId;
+  proyect: string | undefined = environment.firebase.projectId;
 
   constructor(
     private readonly dialog: MatDialog,

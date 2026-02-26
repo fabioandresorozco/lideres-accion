@@ -33,7 +33,7 @@
     <mg-input-text type="text" formControlName="nombres" id="names" label="Nombres"></mg-input-text>
     <mg-input-text type="text" formControlName="apellidos" id="lastNames" label="Apellidos"></mg-input-text>
 
-    <mg-input-text type="phone" formControlName="celular" id="phone" label="Célular o télefono" [minlength]="10"
+    <mg-input-text type="phone" formControlName="celular" id="phone" label="Celular o teléfono" [minlength]="10"
       [maxlength]="10"></mg-input-text>
 
     <div class="mt-2">
@@ -41,7 +41,7 @@
       <p class="text-xs text-gray-500 mb-2">Escriba al menos 3 caracteres para buscar el barrio</p>
       <mg-input-select formControlName="barrio" [label]="'Barrio (Busque por nombre)'" id="barrio" [items]="barrios"
         [asyncSearch]="true" (search)="onSearchBarrio($event)"></mg-input-select>
-      <mg-input-text type="text" formControlName="direccion" id="direccion" label="Direccion"></mg-input-text>
+      <mg-input-text type="text" formControlName="direccion" id="direccion" label="Dirección"></mg-input-text>
     </div>
   </div>
 
@@ -91,7 +91,7 @@
     </label>
 
     <div class="flex flex-col gap-3 mt-4">
-      <mg-sub-title title="Nos va apoyar en"></mg-sub-title>
+      <mg-sub-title title="Nos va a apoyar en"></mg-sub-title>
       <div class="flex justify-around gap-4">
         <label class="inline-flex gap-2 items-center justify-between p-2 cursor-pointer min-w-3">
           <span class="ms-3 text-sm font-medium text-black">Senado</span>
@@ -101,7 +101,7 @@
           </div>
         </label>
         <label class="inline-flex gap-2 items-center justify-between p-2 cursor-pointer min-w-3">
-          <span class="ms-3 text-sm font-medium text-black">Camara</span>
+          <span class="ms-3 text-sm font-medium text-black">Cámara</span>
           <input type="checkbox" [value]="true" class="sr-only peer" formControlName="camara" />
           <div
             class="relative w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">

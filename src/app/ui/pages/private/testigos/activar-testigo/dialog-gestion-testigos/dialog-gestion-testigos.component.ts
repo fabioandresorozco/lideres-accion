@@ -23,6 +23,7 @@ import { InputTextComponent } from '../../../../../shared/components/atoms/input
 import { TitleComponent } from '../../../../../shared/components/atoms/title/title.component';
 import { TestigoModel } from '../../../../../../models/testigo/testigo.model';
 import { AuthService } from '../../../../../shared/services/auth/auth.service';
+import { PuestoVotacionService } from '../../../../../shared/services/puesto-votacion/puesto-votacion.service';
 
 @Component({
     selector: 'app-dialog-gestion-testigos',
@@ -40,9 +41,11 @@ import { AuthService } from '../../../../../shared/services/auth/auth.service';
 })
 export class DialogGestionTestigosComponent implements OnInit {
     form!: FormGroup;
-    testigos$: Observable<BaseModel<TestigoModel>[]>;
+    testigos: BaseModel<TestigoModel>[] = [];
     loading: boolean = false;
+    puestosVotacionMap: Map<string, string> = new Map();
     private readonly authService: AuthService = inject(AuthService);
+    private readonly puestoVotacionService: PuestoVotacionService = inject(PuestoVotacionService);
 
     constructor(
         public dialogRef: MatDialogRef<DialogGestionTestigosComponent>,
@@ -51,11 +54,6 @@ export class DialogGestionTestigosComponent implements OnInit {
         private readonly testigoAsociadoService: TestigoAsociadoService,
         private readonly toast: ToastrService
     ) {
-        // Initialize with empty observable, will be set in ngOnInit or constructor
-        this.testigos$ = this.testigoAsociadoService.getTestigosByCoordinador(
-            this.data.coordinador.id || ''
-        );
-
         this.form = this.fb.group({
             nombre: ['', Validators.required],
             apellido: ['', Validators.required],
@@ -73,6 +71,32 @@ export class DialogGestionTestigosComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.loadPuestosVotacion();
+        this.listarTestigos();
+    }
+
+    listarTestigos() {
+        this.testigoAsociadoService.getTestigosByCoordinador(
+            this.data.coordinador.id || ''
+        ).subscribe((testigos) => {
+            this.testigos = testigos;
+        });
+    }
+
+    loadPuestosVotacion() {
+        this.puestoVotacionService.getPuestosVotacion().subscribe((puestos) => {
+            this.puestosVotacionMap.clear();
+            puestos.forEach(p => {
+                if (p.id) {
+                    this.puestosVotacionMap.set(p.id, p.data.nombre);
+                }
+            });
+        });
+    }
+
+    getPuestoVotacionName(id?: string | null): string {
+        if (!id) return 'Sin asignar';
+        return this.puestosVotacionMap.get(id) || 'Sin asignar';
     }
 
     async onSubmit() {

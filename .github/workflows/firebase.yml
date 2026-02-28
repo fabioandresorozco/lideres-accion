@@ -7,6 +7,13 @@ on:
       - develop
       - medellin
 
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Razón del despliegue manual'
+        required: false
+        default: 'Mantenimiento'
+      
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest

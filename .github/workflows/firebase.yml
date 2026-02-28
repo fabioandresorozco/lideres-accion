@@ -61,7 +61,7 @@ jobs:
         run: |
           cat > src/environment.dev.ts <<EOF
           export const environment = {
-            production: true,
+            production: false,
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_DEV }}",
               authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN_DEV }}",

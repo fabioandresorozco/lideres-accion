@@ -56,29 +56,40 @@ export class AppComponent implements OnInit {
   }
 
   private async promptUpdate(): Promise<void> {
-    const message = 'Nueva versión disponible. La página se recargará en 3 segundos...';
+    const RELOAD_DELAY_MS = 3000;
 
-    this.toastr.info(message, 'Nueva Versión', {
-      timeOut: 3000,
-      progressBar: true,
-      closeButton: false,
-      disableTimeOut: false,
-      tapToDismiss: false
-    });
+    this.toastr.info(
+      'Nueva versión disponible. La página se recargará en 3 segundos...',
+      'Nueva Versión',
+      { timeOut: RELOAD_DELAY_MS, progressBar: true, closeButton: false, tapToDismiss: false }
+    );
 
-    // Escuchar el evento 'controllerchange': se dispara exactamente cuando
-    // el nuevo Service Worker toma control de la página. Recargar en ese
-    // momento garantiza que el navegador sirva los assets de la versión nueva
-    // y evita el race condition de usar un setTimeout fijo.
+    // Estrategia doble para garantizar el reload en cualquier escenario:
+    //
+    // 1. controllerchange: se dispara cuando el nuevo SW toma control (lo ideal).
+    //    En ese caso cancelamos el fallback y recargamos de inmediato.
+    //
+    // 2. setTimeout (fallback): si controllerchange nunca llega
+    //    (conocido en Angular ngsw v17 cuando clients.claim() tarda),
+    //    el reload ocurre de todas formas al terminar el toastr.
+    let reloadScheduled = false;
+    const doReload = () => {
+      if (reloadScheduled) return; // evitar doble recarga
+      reloadScheduled = true;
+      window.location.reload();
+    };
+
+    const fallback = setTimeout(doReload, RELOAD_DELAY_MS + 500);
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        window.location.reload();
+        clearTimeout(fallback);
+        doReload();
       }, { once: true });
     }
 
-    // activateUpdate() le indica al SW que salte la cola de espera (skipWaiting)
-    // y tome control inmediatamente, lo que dispara el 'controllerchange' de arriba.
+    // Le indica al SW que llame skipWaiting() y tome control,
+    // lo que debería disparar controllerchange.
     await this.swUpdate.activateUpdate();
   }
 }
-

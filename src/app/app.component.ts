@@ -1,9 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { ToastrService } from 'ngx-toastr';
-import { NotificationService } from './ui/shared/services/notification/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -12,59 +11,29 @@ import { NotificationService } from './ui/shared/services/notification/notificat
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
-  private updateCheckInterval: ReturnType<typeof setInterval> | null = null;
-
+export class AppComponent implements OnInit {
   constructor(
     private readonly swUpdate: SwUpdate,
     private readonly toastr: ToastrService,
-    private readonly notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
     // 1. Verificar que el Service Worker esté habilitado
     if (this.swUpdate.isEnabled) {
 
-      // 2. Suscribirse a eventos de versión
+      // 2. Suscribirse al evento 'available'
       this.swUpdate.versionUpdates.subscribe((event: VersionEvent) => {
+
+        // El evento VersionReadyEvent (parte de VersionEvent) es cuando la nueva versión está lista.
         if (event.type === 'VERSION_READY') {
-          // Nueva versión lista: notificar y forzar actualización
+          // 3. Notificar al usuario y forzar la actualización
           this.promptUpdate();
         }
-
-        if (event.type === 'VERSION_INSTALLATION_FAILED') {
-          console.error('SW: Falló la instalación de la nueva versión', event);
-        }
       });
 
-      // 3. Manejar estado irrecuperable del Service Worker
-      this.swUpdate.unrecoverable.subscribe((event: { reason: string }) => {
-        console.error('SW: Estado irrecuperable', event.reason);
-        this.toastr.error(
-          'La aplicación necesita recargarse para funcionar correctamente.',
-          'Error de caché',
-          { disableTimeOut: true, closeButton: false, tapToDismiss: false }
-        );
-        setTimeout(() => document.location.reload(), 3000);
-      });
-
-      // Verificar actualizaciones de inmediato
-      this.swUpdate.checkForUpdate().catch((err: unknown) =>
-        console.error('SW: Error al verificar actualización', err)
-      );
-
-      // Verificar actualizaciones periódicamente (cada 30 segundos)
-      this.updateCheckInterval = setInterval(() => {
-        this.swUpdate.checkForUpdate().catch((err: unknown) =>
-          console.error('SW: Error al verificar actualización periódica', err)
-        );
-      }, 30 * 1000);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.updateCheckInterval) {
-      clearInterval(this.updateCheckInterval);
+      // Opcional: Esto fuerza al Service Worker a verificar actualizaciones de inmediato,
+      // útil en entornos donde las verificaciones automáticas no son lo suficientemente rápidas.
+      this.swUpdate.checkForUpdate();
     }
   }
 
@@ -72,21 +41,16 @@ export class AppComponent implements OnInit, OnDestroy {
     const message = 'Actualizando aplicación a la nueva versión...';
 
     this.toastr.info(message, 'Actualización Obligatoria', {
-      disableTimeOut: true,
+      timeOut: 2000,
       progressBar: true,
-      closeButton: false,
-      tapToDismiss: false
+      closeButton: false, // Prevent closing
+      disableTimeOut: false,
+      tapToDismiss: false // Prevent dismissing
     });
 
-    // Esperar 3 segundos para que el usuario lea el mensaje, luego forzar actualización
-    setTimeout(async () => {
-      await this.swUpdate.activateUpdate();
-      // Limpiar caches del SW para garantizar que index.html se traiga fresco del servidor
-      if ('caches' in window) {
-        const keys = await caches.keys();
-        await Promise.all(keys.map(key => caches.delete(key)));
-      }
-      document.location.reload();
+    // Wait 3 seconds for the user to read the message, then force update
+    setTimeout(() => {
+      this.swUpdate.activateUpdate().then(() => document.location.reload());
     }, 3000);
   }
 }

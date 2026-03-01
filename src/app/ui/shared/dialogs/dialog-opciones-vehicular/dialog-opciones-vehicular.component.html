@@ -3,13 +3,13 @@
   <p class="text-center font-primary">Seleccione la opcion que desea</p>
 </mat-dialog-content>
 <mat-dialog-actions class="w-full flex flex-col gap-4">
-  <mg-button mat-dialog-close size="big" text="Mi vehículo" class="w-full" icon="directions_car"
+  <mg-button mat-dialog-close size="big" text="Mi vehículo" class="w-full" icon="🚗"
     routerLink="/private/mi-vehiculo"></mg-button>
   @if(this.usuario.coordinadorTransporte || this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' ||
   this.usuario.rol === 'Coordinador de iglesia') {
-  <mg-button mat-dialog-close size="big" text="Aprobar vehículos" class="w-full" icon="check_circle"
+  <mg-button mat-dialog-close size="big" text="Aprobar vehículos" class="w-full" icon="✅"
     routerLink="/private/aprobar-vehiculos"></mg-button>
-  <mg-button mat-dialog-close size="big" text="Vehículos aprobados" class="w-full" icon="list"
+  <mg-button mat-dialog-close size="big" text="Vehículos aprobados" class="w-full" icon="📋"
     routerLink="/private/listar-vehiculos-aprobados"></mg-button>
   }
   <button mat-button (click)="onNoClick()">Cerrar</button>

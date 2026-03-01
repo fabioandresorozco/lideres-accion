@@ -20,12 +20,4 @@
 <body class="mat-typography h-dvh bg-base">
   <app-root></app-root>
 </body>
-<script>
-  window.APP_VERSION = "__APP_VERSION__";
-  // Capturar beforeinstallprompt antes de que Angular arranque para evitar perder el evento
-  window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault();
-    window.__pwaInstallPrompt = e;
-  });
-</script>
 </html>

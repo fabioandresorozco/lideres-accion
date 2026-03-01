@@ -18,7 +18,7 @@ import { DialogInstallGuideComponent } from '../../../../ui/shared/dialogs/dialo
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LogoComponent, InputTextComponent, MatIconModule, MatDialogModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextComponent, MatIconModule, MatDialogModule],
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
@@ -26,7 +26,6 @@ export class LoginComponent {
   nameApp = NAME_LONG_APP;
   loading = false
   showPasswordLogin = false;
-  appVersion = (window as any).APP_VERSION || '__APP_VERSION__';
 
   constructor(
     private readonly formBuilder: FormBuilder,

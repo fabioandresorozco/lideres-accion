@@ -1,4 +1,4 @@
-import { ApplicationConfig, ErrorHandler } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -22,8 +22,8 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAnimationsAsync(),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: environment.production,
-      registrationStrategy: 'registerImmediately'
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
     })
   ],
 };

@@ -129,10 +129,6 @@ jobs:
           };
           EOF
 
-      - name: Inject version
-        run: |
-          sed -i "s|__APP_VERSION__|1.0.${{ github.run_number }}|g" src/index.html
-
       - name: Build Angular
         run: |
           if [ "${GITHUB_REF_NAME}" = "main" ]; then

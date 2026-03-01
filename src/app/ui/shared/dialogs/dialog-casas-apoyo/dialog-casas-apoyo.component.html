@@ -4,16 +4,16 @@
 </mat-dialog-content>
 <mat-dialog-actions class="w-full flex flex-col gap-4">
 
-  <mg-button mat-dialog-close size="big" text="Mi casa de apoyo" class="w-full" icon="home"
+  <mg-button mat-dialog-close size="big" text="Mi casa de apoyo" class="w-full" icon="🏠"
     routerLink="/private/mi-casa-de-apoyo"></mg-button>
 
   @if(this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' || this.usuario.coordinadorCasaApoyo) {
-  <mg-button mat-dialog-close size="big" text="Aprobar solicitudes" class="w-full" icon="check_circle"
+  <mg-button mat-dialog-close size="big" text="Aprobar solicitudes" class="w-full" icon="✅"
     routerLink="/private/aprobar-casas-apoyo"></mg-button>
   }
 
   @if(this.usuario.rol === 'Pastor' || this.usuario.rol === 'Super usuario' || this.usuario.coordinadorCasaApoyo || this.usuario.coordinadorTransporte) {
-  <mg-button mat-dialog-close size="big" text="Añadir Vehículos/Casas" class="w-full" icon="list"
+  <mg-button mat-dialog-close size="big" text="Añadir Vehículos/Casas" class="w-full" icon="🛒"
     routerLink="/private/listar-casas-apoyo"></mg-button>
   }
 

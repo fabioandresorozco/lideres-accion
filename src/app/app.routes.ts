@@ -4,12 +4,12 @@ import { canActivate, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
 export const routes: Routes = [
     {
         path: 'private',
-        loadChildren: () => import('./ui/pages/private/private.module').then((m) => m.PrivateModule),
+        loadChildren: () => import('./ui/pages/private/private.routes').then((m) => m.routes),
         ...canActivate(() => redirectUnauthorizedTo(['./public/login'])),
     },
     {
         path: 'public',
-        loadChildren: () => import('./ui/pages/public/public.module').then((m) => m.PublicModule)
+        loadChildren: () => import('./ui/pages/public/public.routes').then((m) => m.routes)
     },
     {
         path: '',

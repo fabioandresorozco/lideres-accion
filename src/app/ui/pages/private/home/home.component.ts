@@ -40,8 +40,6 @@ import { EnviarResultadosVotacionComponent } from '../enviar-resultados-votacion
     MatTooltipModule,
     ContainerAlertInformationComponent,
     MatExpansionModule,
-    MatExpansionModule,
-    MatExpansionModule,
     PostulacionCardComponent,
   ],
   templateUrl: './home.component.html',

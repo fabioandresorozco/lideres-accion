@@ -66,12 +66,19 @@ export class AppComponent implements OnInit {
       tapToDismiss: false
     });
 
-    // Activar la actualización y recargar una vez confirmada,
-    // para que el usuario siempre reciba la versión desplegada.
-    const activated = await this.swUpdate.activateUpdate();
-    if (activated) {
-      setTimeout(() => document.location.reload(), 3000);
+    // Escuchar el evento 'controllerchange': se dispara exactamente cuando
+    // el nuevo Service Worker toma control de la página. Recargar en ese
+    // momento garantiza que el navegador sirva los assets de la versión nueva
+    // y evita el race condition de usar un setTimeout fijo.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      }, { once: true });
     }
+
+    // activateUpdate() le indica al SW que salte la cola de espera (skipWaiting)
+    // y tome control inmediatamente, lo que dispara el 'controllerchange' de arriba.
+    await this.swUpdate.activateUpdate();
   }
 }
 

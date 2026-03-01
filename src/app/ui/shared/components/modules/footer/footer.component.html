@@ -27,4 +27,7 @@
   <app-button-footer *ngIf="canCreateCarrera" class="flex-1 min-w-[80px] flex justify-center" [option]="'Traslados'"
     [icon]="'swap_horiz'" [goTo]="$any(null)" (click)="openDialogCrearCarrera()"></app-button-footer>
 
+  <!-- Versión: visible para verificar deploy sin ocupar espacio de navegación -->
+  <span class="text-[10px] text-white/50 px-2 self-end pb-1 shrink-0 select-none">v{{ appVersion }}</span>
+
 </div>

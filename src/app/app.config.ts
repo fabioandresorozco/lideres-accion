@@ -1,4 +1,4 @@
-import { ApplicationConfig, ErrorHandler, isDevMode } from '@angular/core';
+import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -22,7 +22,11 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAnimationsAsync(),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      // Se activa en cualquier entorno desplegado (prod, dev, medellin).
+      // isDevMode() no aplica aquí porque los builds de Firebase con
+      // --configuration=development también tienen optimization:false,
+      // lo que hace que isDevMode() retorne true y deshabilite el SW.
+      enabled: environment.enableServiceWorker ?? !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],

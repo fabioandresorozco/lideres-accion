@@ -35,6 +35,7 @@ jobs:
           cat > src/environment.prod.ts <<EOF
           export const environment = {
             production: true,
+            enableServiceWorker: true,
             appVersion: "1.0.${{ github.run_number }}",
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_PROD }}",
@@ -70,6 +71,7 @@ jobs:
           cat > src/environment.dev.ts <<EOF
           export const environment = {
             production: false,
+            enableServiceWorker: true,
             appVersion: "1.0.${{ github.run_number }}",
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_DEV }}",
@@ -105,6 +107,7 @@ jobs:
           cat > src/environment.medellin.ts <<EOF
           export const environment = {
             production: true,
+            enableServiceWorker: true,
             appVersion: "1.0.${{ github.run_number }}",
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_MEDELLIN }}",

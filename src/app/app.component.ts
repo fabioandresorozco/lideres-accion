@@ -56,20 +56,20 @@ export class AppComponent implements OnInit {
   }
 
   private promptUpdate(): void {
-    const message = 'Actualizando aplicación a la nueva versión...';
+    const message = 'Hay una nueva versión de la aplicación disponible. Se actualizará en el próximo inicio o puedes recargar ahora.';
 
-    this.toastr.info(message, 'Actualización Obligatoria', {
-      timeOut: 2000,
+    this.toastr.info(message, 'Nueva Versión', {
+      timeOut: 5000,
       progressBar: true,
-      closeButton: false, // Prevent closing
+      closeButton: true,
       disableTimeOut: false,
-      tapToDismiss: false // Prevent dismissing
+      tapToDismiss: true
     });
 
-    // Wait 3 seconds for the user to read the message, then force update
-    setTimeout(() => {
-      this.swUpdate.activateUpdate().then(() => document.location.reload());
-    }, 3000);
+    // We no longer force a reload here to avoid interrupting the user.
+    // The Service Worker will activate the update in the background, 
+    // and the new version will be served on the next reload.
+    this.swUpdate.activateUpdate();
   }
 }
 

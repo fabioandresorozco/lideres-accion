@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PwaService } from '../../../../shared/services/pwa/pwa.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogInstallGuideComponent } from '../../../../ui/shared/dialogs/dialog-install-guide/dialog-install-guide.component';
+import { environment } from '../../../../../environment';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ import { DialogInstallGuideComponent } from '../../../../ui/shared/dialogs/dialo
 export class LoginComponent {
   loginForm!: FormGroup;
   nameApp = NAME_LONG_APP;
+  appVersion = environment.appVersion;
   loading = false
   showPasswordLogin = false;
 

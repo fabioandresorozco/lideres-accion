@@ -27,6 +27,7 @@ import { PostulacionCardComponent } from '../../../shared/components/cards/postu
 import { TestigoModel } from '../../../../models/testigo/testigo.model';
 import { PuestoVotacionService } from '../../../shared/services/puesto-votacion/puesto-votacion.service';
 import { EnviarResultadosVotacionComponent } from '../enviar-resultados-votacion/enviar-resultados-votacion.component';
+import { LocationService } from '../../../shared/services/location/location.service';
 
 @Component({
   selector: 'app-home',
@@ -79,7 +80,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private readonly casaApoyoService: CasaApoyoService,
     private readonly testigoAsociadoService: TestigoAsociadoService,
     private readonly puestoVotacionService: PuestoVotacionService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly locationService: LocationService
   ) { }
 
   ngOnInit(): void {
@@ -302,9 +304,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.locationInterval) {
       clearInterval(this.locationInterval);
     }
-    if (this.userLocationWatchId !== null) {
-      navigator.geolocation.clearWatch(this.userLocationWatchId);
-    }
+    // if (this.userLocationWatchId !== null) {
+    //   navigator.geolocation.clearWatch(this.userLocationWatchId);
+    // }
   }
 
   updateVehiculoStatus(estado: 'Activo' | 'Inactivo' | 'En carrera') {
@@ -328,26 +330,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (!this.currentVehiculo || !this.currentVehiculo.id) return;
 
     const updateLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          if (this.currentVehiculo && this.currentVehiculo.id) {
-            const ubicacion = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            this.vehiculoService.updateVehiculo(this.currentVehiculo.id, {
-              ...this.currentVehiculo,
-              ubicacionActual: ubicacion
-            });
-          }
-        }, (error) => {
-          console.error('Error getting location', error);
-        }, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        });
-      }
+      this.locationService.getUserLocation().then((position) => {
+        if (this.currentVehiculo && this.currentVehiculo.id) {
+          const ubicacion = {
+            lat: position.lat,
+            lng: position.lng
+          };
+          this.vehiculoService.updateVehiculo(this.currentVehiculo.id, {
+            ...this.currentVehiculo,
+            ubicacionActual: ubicacion
+          });
+        }
+      }).catch((error) => {
+        console.error('Error getting location', error);
+      });
     };
 
     if (this.currentVehiculo.estado === 'Activo') {
@@ -362,20 +358,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getUserLocation() {
-    if (navigator.geolocation) {
-      this.userLocationWatchId = navigator.geolocation.watchPosition((position) => {
-        this.userLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
+    this.locationService.watchUserLocation()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((position) => {
+        this.userLocation = position;
       }, (error) => {
         console.error('Error getting user location', error);
-      }, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
       });
-    }
   }
 
   // Helper for UI class

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -6,6 +8,9 @@ import { Injectable } from '@angular/core';
 export class LocationService {
     private userLocation: { lat: number, lng: number } | null = null;
     private locationPromise: Promise<{ lat: number, lng: number }> | null = null;
+    
+    // Observable compartido para evitar múltiples watchers
+    private locationObservable$: Observable<{ lat: number, lng: number }> | null = null;
 
     constructor() { }
 
@@ -52,10 +57,48 @@ export class LocationService {
         return this.locationPromise;
     }
 
-    // Optional: Method to force refresh if needed (e.g., user moved significantly)
     refreshLocation(): Promise<{ lat: number, lng: number }> {
         this.userLocation = null;
         this.locationPromise = null;
         return this.getUserLocation();
+    }
+
+    watchUserLocation(): Observable<{ lat: number, lng: number }> {
+        if (!this.locationObservable$) {
+            this.locationObservable$ = new Observable<{ lat: number, lng: number }>((observer) => {
+                let watchId: number;
+
+                if (navigator.geolocation) {
+                    watchId = navigator.geolocation.watchPosition(
+                        (position) => {
+                            this.userLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            observer.next(this.userLocation);
+                        },
+                        (error) => {
+                            observer.error(error);
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+                    );
+                } else {
+                    observer.error('Geolocation not supported');
+                }
+
+                return () => {
+                    if (watchId !== undefined) {
+                        navigator.geolocation.clearWatch(watchId);
+                    }
+                };
+            }).pipe(
+                shareReplay({ bufferSize: 1, refCount: false })
+            );
+        }
+        return this.locationObservable$;
     }
 }

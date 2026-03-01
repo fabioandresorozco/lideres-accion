@@ -35,11 +35,21 @@
 
                 <!-- Local type CarreraWithDistance used here -->
                 <div class="flex justify-between w-full items-center">
-                    <div *ngIf="carrera.distancia"
-                        class="flex items-center justify-between mt-1 gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full w-fit">
-                        <mat-icon class="!text-sm !w-4 !h-4">near_me</mat-icon>
-                        <span class="font-bold text-xl">{{ carrera.distancia }} km (~{{ carrera.tiempoEstimado }}
-                            min)</span>
+                    <div class="flex flex-col gap-1">
+                        <div *ngIf="carrera.distancia"
+                            class="flex items-center justify-between mt-1 gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full w-fit"
+                            title="Distancia lineal estimada">
+                            <mat-icon class="!text-sm !w-4 !h-4">near_me</mat-icon>
+                            <span class="font-bold text-xl">{{ carrera.distancia }} km (~{{ carrera.tiempoEstimado }}
+                                min)</span>
+                        </div>
+                        <div *ngIf="carrera.distanciaRuta"
+                            class="flex items-center justify-between mt-1 gap-1 text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full w-fit"
+                            title="Distancia ruta vehicular">
+                            <mat-icon class="!text-sm !w-4 !h-4">directions_car</mat-icon>
+                            <span class="font-bold text-xl">{{ carrera.distanciaRuta }} km (~{{ carrera.tiempoRuta }}
+                                min)</span>
+                        </div>
                     </div>
                     <span class="text-lg px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-100">
                         {{ carrera.tipoVehiculo }}

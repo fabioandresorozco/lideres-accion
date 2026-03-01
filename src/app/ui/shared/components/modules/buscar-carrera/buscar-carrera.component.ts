@@ -14,11 +14,14 @@ import { firstValueFrom, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogNotificationComponent } from '../../../dialogs/dialog-notification/dialog-nofication.component';
 import { LocationService } from '../../../services/location/location.service';
+import { RouteService } from '../../services/route/route.service';
 
 // Local interface to extend model with display properties without modifying global model
 interface CarreraWithDistance extends CreateCarreraModel {
     distancia?: string;
     tiempoEstimado?: number;
+    distanciaRuta?: string;
+    tiempoRuta?: number;
 }
 
 import { MatChipsModule } from '@angular/material/chips';
@@ -55,7 +58,8 @@ export class BuscarCarreraComponent implements OnInit, OnDestroy {
         private authService: AuthService,
         private vehiculoService: VehiculoService,
         private dialog: MatDialog,
-        private locationService: LocationService
+        private locationService: LocationService,
+        private routeService: RouteService
     ) { }
 
     ngOnInit(): void {
@@ -211,6 +215,36 @@ export class BuscarCarreraComponent implements OnInit, OnDestroy {
             if (a.distancia && b.distancia) return Number(a.distancia) - Number(b.distancia);
             return 0;
         });
+
+        this.calculateRouteDistances();
+    }
+
+    async calculateRouteDistances() {
+        if (!this.userLocation) return;
+
+        // Process one by one to minimalize server load (or use Promise.all for parallel)
+        // Using Promise.all for better UX but be aware of rate limits
+        const promises = this.carrerasDisponibles.map(async (carrera) => {
+            if (carrera.latitudSolicitante && carrera.longitudSolicitante) {
+                try {
+                    const route = await firstValueFrom(this.routeService.getRoute(
+                        this.userLocation!.lat,
+                        this.userLocation!.lng,
+                        carrera.latitudSolicitante,
+                        carrera.longitudSolicitante
+                    ));
+
+                    if (route) {
+                        carrera.distanciaRuta = (route.distance / 1000).toFixed(1); // meters to km
+                        carrera.tiempoRuta = Math.round(route.duration / 60); // seconds to minutes
+                    }
+                } catch (e) {
+                    console.error('Error calculating route distance', e);
+                }
+            }
+        });
+
+        await Promise.all(promises);
     }
 
     isPostulated(carrera: CreateCarreraModel): boolean {

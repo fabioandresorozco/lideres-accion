@@ -14,7 +14,7 @@ import { firstValueFrom, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogNotificationComponent } from '../../../dialogs/dialog-notification/dialog-nofication.component';
 import { LocationService } from '../../../services/location/location.service';
-import { RouteService } from '../../services/route/route.service';
+import { RouteService } from '../../../services/route/route.service';
 
 // Local interface to extend model with display properties without modifying global model
 interface CarreraWithDistance extends CreateCarreraModel {

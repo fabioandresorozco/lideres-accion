@@ -5,6 +5,7 @@
     {
       "name": "Líderes en acción",
       "installMode": "prefetch",
+      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/favicon.ico",

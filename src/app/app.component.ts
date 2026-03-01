@@ -42,10 +42,10 @@ export class AppComponent implements OnInit {
       // 5. Polling periódico de actualizaciones (Recomendado por Angular)
       // Permite estabilizar la app primero para que no bloquee renderizado
       const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable === true));
-      const everyHour$ = interval(60 * 60 * 1000); // 1 hora de polling
-      const everyHourOnceAppIsStable$ = concat(appIsStable$, everyHour$);
+      const everyFiveMin$ = interval(5 * 60 * 1000); // 5 minutos de polling
+      const everyFiveMinOnceAppIsStable$ = concat(appIsStable$, everyFiveMin$);
 
-      everyHourOnceAppIsStable$.subscribe(() => {
+      everyFiveMinOnceAppIsStable$.subscribe(() => {
         this.swUpdate.checkForUpdate();
       });
 
@@ -55,21 +55,23 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private promptUpdate(): void {
-    const message = 'Hay una nueva versión de la aplicación disponible. Se actualizará en el próximo inicio o puedes recargar ahora.';
+  private async promptUpdate(): Promise<void> {
+    const message = 'Nueva versión disponible. La página se recargará en 3 segundos...';
 
     this.toastr.info(message, 'Nueva Versión', {
-      timeOut: 5000,
+      timeOut: 3000,
       progressBar: true,
-      closeButton: true,
+      closeButton: false,
       disableTimeOut: false,
-      tapToDismiss: true
+      tapToDismiss: false
     });
 
-    // We no longer force a reload here to avoid interrupting the user.
-    // The Service Worker will activate the update in the background, 
-    // and the new version will be served on the next reload.
-    this.swUpdate.activateUpdate();
+    // Activar la actualización y recargar una vez confirmada,
+    // para que el usuario siempre reciba la versión desplegada.
+    const activated = await this.swUpdate.activateUpdate();
+    if (activated) {
+      setTimeout(() => document.location.reload(), 3000);
+    }
   }
 }
 

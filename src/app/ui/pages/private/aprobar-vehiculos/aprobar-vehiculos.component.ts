@@ -112,13 +112,13 @@ export class AprobarVehiculosComponent implements OnInit, AfterViewInit {
                 aprobadoPor: estado ? this.usuario.email : null
             })
                 .then(() => {
-                    this.dialog.open(DialogNotificationComponent, {
-                        data: {
-                            title: 'Éxito',
-                            message: `Vehículo ${estado ? 'aprobado' : 'desaprobado'} correctamente.`,
-                            type: 'success'
-                        }
-                    });
+                    // this.dialog.open(DialogNotificationComponent, {
+                    //     data: {
+                    //         title: 'Éxito',
+                    //         message: `Vehículo ${estado ? 'aprobado' : 'desaprobado'} correctamente.`,
+                    //         type: 'success'
+                    //     }
+                    // });
                     this.loadVehiculos();
                 })
                 .catch(err => {

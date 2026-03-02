@@ -1,5 +1,6 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -15,6 +16,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideHttpClient(withFetch()),
     provideToastr(environment.alerts),
     provideClientHydration(),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
@@ -22,7 +24,11 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAnimationsAsync(),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      // Se activa en cualquier entorno desplegado (prod, dev, medellin).
+      // isDevMode() no aplica aquí porque los builds de Firebase con
+      // --configuration=development también tienen optimization:false,
+      // lo que hace que isDevMode() retorne true y deshabilite el SW.
+      enabled: environment.enableServiceWorker ?? !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],

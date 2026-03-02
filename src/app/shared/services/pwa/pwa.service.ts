@@ -9,50 +9,85 @@ export class PwaService {
     private platform = 'WEB';
 
     constructor() {
-        this.initPwaPrompt();
+        if (typeof window === 'undefined') {
+            return; // SSR: no hacer nada
+        }
+
         this.checkPlatform();
+
+        // Si la app ya está en modo standalone (ya instalada), no mostrar botón
+        if (this.isRunningStandalone()) {
+            this.showInstallButton = false;
+            return;
+        }
+
+        this.initPwaPrompt();
     }
 
     get currentPlatform() {
         return this.platform;
     }
 
+    /**
+     * Detecta si la app ya está corriendo como PWA instalada (standalone)
+     */
+    private isRunningStandalone(): boolean {
+        // iOS standalone
+        if (('standalone' in window.navigator) && (window.navigator as any).standalone) {
+            return true;
+        }
+        // Android/Desktop standalone via display-mode media query
+        if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+            return true;
+        }
+        return false;
+    }
+
     private checkPlatform() {
-        if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
-            const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-            if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
-                this.platform = 'IOS';
-                // Check if already installed (standalone mode)
-                const isStandalone = ('standalone' in window.navigator) && (window.navigator as any).standalone;
-                if (!isStandalone) {
-                    this.showInstallButton = true; // Show button for iOS manual install
-                }
+        if (typeof navigator === 'undefined') return;
+
+        const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+
+        if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
+            this.platform = 'IOS';
+            if (!this.isRunningStandalone()) {
+                this.showInstallButton = true;
             }
+        } else if (/Android/i.test(userAgent)) {
+            this.platform = 'ANDROID';
+        } else {
+            this.platform = 'DESKTOP';
         }
     }
 
     private initPwaPrompt() {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent the mini-infobar from appearing on mobile
-                e.preventDefault();
-                // Stash the event so it can be triggered later.
-                this.deferredPrompt = e;
-                // Update UI notify the user they can install the PWA
-                this.showInstallButton = true;
-                this.platform = 'ANDROID';
-            });
-
-            // Optionally listen for appinstalled event
-            window.addEventListener('appinstalled', () => {
-                this.showInstallButton = false;
-                this.deferredPrompt = null;
-            });
+        // 1. Recuperar evento capturado globalmente antes de que Angular arrancara
+        if ((window as any).__pwaInstallPrompt) {
+            this.deferredPrompt = (window as any).__pwaInstallPrompt;
+            this.showInstallButton = true;
+            if (this.platform === 'WEB') {
+                this.platform = 'DESKTOP';
+            }
+            // Limpiar referencia global
+            delete (window as any).__pwaInstallPrompt;
         }
+
+        // 2. Escuchar futuros eventos (por si el usuario cancela y el browser vuelve a dispararlo)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            this.deferredPrompt = e;
+            this.showInstallButton = true;
+        });
+
+        // 3. Cuando se instala, ocultar botón
+        window.addEventListener('appinstalled', () => {
+            this.showInstallButton = false;
+            this.deferredPrompt = null;
+        });
     }
 
     /**
-     * Triggers the install prompt or returns true if manual guide is needed
+     * Triggers the install prompt or returns true if manual guide is needed (iOS)
      */
     async installPwa(): Promise<boolean> {
         if (this.deferredPrompt) {
@@ -64,7 +99,7 @@ export class PwaService {
             }
             return false; // Handled automatically
         }
-        // If no deferred prompt (e.g. iOS or manual case), return true to show guide
+        // If no deferred prompt (e.g. iOS), return true to show manual guide
         return true;
     }
 }

@@ -31,7 +31,7 @@
                     <p class="font-medium text-black text-lg">{{ carrera.nombreSolicitante || 'Usuario'}}</p>
                 </div>
                 <div class="flex flex-col items-center justify-center gap-2">
-                    <mg-icon-whatsapp *ngIf="carrera.telefonoSolicitante" [phone]="carrera.telefonoSolicitante"
+                    <mg-icon-whatsapp *ngIf="carrera.telefonoSolicitante" message="Hola {{ carrera.nombreSolicitante }}, soy {{ carrera.datosConductorAprobado?.nombre }} tu conductor asignado para la carrera, voy en camino" [phone]="carrera.telefonoSolicitante"
                         size="medium"></mg-icon-whatsapp>
                     <mg-icon-button *ngIf="carrera.telefonoSolicitante" icon="call"
                         [link]="'tel:' + carrera.telefonoSolicitante" variant="info" size="medium"></mg-icon-button>
@@ -46,7 +46,7 @@
                     <p class="font-medium text-black text-lg">{{ carrera.nombreVotante || 'Votante' }}</p>
                 </div>
                 <div class="flex flex-col justify-center items-center gap-2">
-                    <mg-icon-whatsapp *ngIf="carrera.telefonoVotante" [phone]="carrera.telefonoVotante"
+                    <mg-icon-whatsapp *ngIf="carrera.telefonoVotante" message="Hola {{ carrera.nombreVotante }}, soy {{ carrera.datosConductorAprobado?.nombre }} tu conductor asignado para acompañarte a votar" [phone]="carrera.telefonoVotante"
                         size="medium"></mg-icon-whatsapp>
                     <mg-icon-button *ngIf="carrera.telefonoVotante" icon="call"
                         [link]="'tel:' + carrera.telefonoVotante" variant="info" size="medium"></mg-icon-button>

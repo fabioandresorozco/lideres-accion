@@ -19,6 +19,16 @@ export function app(): express.Express {
 
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
+
+  // Disable caching for Service Worker and manifest files
+  // so the application can always check for updates correctly.
+  server.get(['/ngsw.json', '/ngsw-worker.js', '/manifest.webmanifest', '/index.html'], (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+  });
+
   // Serve static files from /browser
   server.get('*.*', express.static(browserDistFolder, {
     maxAge: '1y'

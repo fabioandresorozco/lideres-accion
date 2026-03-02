@@ -1,14 +1,14 @@
-import { HttpClientModule } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ApplicationRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { ToastrService } from 'ngx-toastr';
-import { NotificationService } from './ui/shared/services/notification/notification.service';
+import { concat, interval } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HttpClientModule],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -16,21 +16,36 @@ export class AppComponent implements OnInit {
   constructor(
     private readonly swUpdate: SwUpdate,
     private readonly toastr: ToastrService,
-    private readonly notificationService: NotificationService
+    private readonly appRef: ApplicationRef
   ) { }
 
   ngOnInit(): void {
     // 1. Verificar que el Service Worker esté habilitado
     if (this.swUpdate.isEnabled) {
 
-      // 2. Suscribirse al evento 'available'
+      // 2. Suscribirse al evento para nuevas versiones
       this.swUpdate.versionUpdates.subscribe((event: VersionEvent) => {
-
         // El evento VersionReadyEvent (parte de VersionEvent) es cuando la nueva versión está lista.
         if (event.type === 'VERSION_READY') {
           // 3. Notificar al usuario y forzar la actualización
           this.promptUpdate();
         }
+      });
+
+      // 4. Manejar estado irrecuperable (ej. discrepancia en caché de assets PWA)
+      this.swUpdate.unrecoverable.subscribe(event => {
+        this.toastr.error('Estado de la aplicación irrecuperable. Recargando...', 'Error Crítico');
+        setTimeout(() => document.location.reload(), 2000);
+      });
+
+      // 5. Polling periódico de actualizaciones (Recomendado por Angular)
+      // Permite estabilizar la app primero para que no bloquee renderizado
+      const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable === true));
+      const everyFiveMin$ = interval(5 * 60 * 1000); // 5 minutos de polling
+      const everyFiveMinOnceAppIsStable$ = concat(appIsStable$, everyFiveMin$);
+
+      everyFiveMinOnceAppIsStable$.subscribe(() => {
+        this.swUpdate.checkForUpdate();
       });
 
       // Opcional: Esto fuerza al Service Worker a verificar actualizaciones de inmediato,
@@ -39,21 +54,41 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private promptUpdate(): void {
-    const message = 'Actualizando aplicación a la nueva versión...';
+  private async promptUpdate(): Promise<void> {
+    const RELOAD_DELAY_MS = 3000;
 
-    this.toastr.info(message, 'Actualización Obligatoria', {
-      timeOut: 3000,
-      progressBar: true,
-      closeButton: false, // Prevent closing
-      disableTimeOut: false,
-      tapToDismiss: false // Prevent dismissing
-    });
+    this.toastr.info(
+      'Nueva versión disponible. La página se recargará en 3 segundos...',
+      'Nueva Versión',
+      { timeOut: RELOAD_DELAY_MS, progressBar: true, closeButton: false, tapToDismiss: false }
+    );
 
-    // Wait 3 seconds for the user to read the message, then force update
-    setTimeout(() => {
-      this.swUpdate.activateUpdate().then(() => document.location.reload());
-    }, 3000);
+    // Estrategia doble para garantizar el reload en cualquier escenario:
+    //
+    // 1. controllerchange: se dispara cuando el nuevo SW toma control (lo ideal).
+    //    En ese caso cancelamos el fallback y recargamos de inmediato.
+    //
+    // 2. setTimeout (fallback): si controllerchange nunca llega
+    //    (conocido en Angular ngsw v17 cuando clients.claim() tarda),
+    //    el reload ocurre de todas formas al terminar el toastr.
+    let reloadScheduled = false;
+    const doReload = () => {
+      if (reloadScheduled) return; // evitar doble recarga
+      reloadScheduled = true;
+      window.location.reload();
+    };
+
+    const fallback = setTimeout(doReload, RELOAD_DELAY_MS + 500);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        clearTimeout(fallback);
+        doReload();
+      }, { once: true });
+    }
+
+    // Le indica al SW que llame skipWaiting() y tome control,
+    // lo que debería disparar controllerchange.
+    await this.swUpdate.activateUpdate();
   }
 }
-

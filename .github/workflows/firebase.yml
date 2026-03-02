@@ -7,6 +7,13 @@ on:
       - develop
       - medellin
 
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Razón del despliegue manual'
+        required: false
+        default: 'Mantenimiento'
+      
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -28,6 +35,8 @@ jobs:
           cat > src/environment.prod.ts <<EOF
           export const environment = {
             production: true,
+            enableServiceWorker: true,
+            appVersion: "1.0.${{ github.run_number }}",
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_PROD }}",
               authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN_PROD }}",
@@ -62,6 +71,8 @@ jobs:
           cat > src/environment.dev.ts <<EOF
           export const environment = {
             production: false,
+            enableServiceWorker: true,
+            appVersion: "1.0.${{ github.run_number }}",
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_DEV }}",
               authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN_DEV }}",
@@ -88,12 +99,16 @@ jobs:
             },
             alerts: { timeOut: 3000, preventDuplicates: true },
           };
+          EOF
+
       - name: Generate medellin environment from secrets (when medellin)
         if: github.ref_name == 'medellin'
         run: |
           cat > src/environment.medellin.ts <<EOF
           export const environment = {
-            production: false,
+            production: true,
+            enableServiceWorker: true,
+            appVersion: "1.0.${{ github.run_number }}",
             firebase: {
               apiKey: "${{ secrets.FIREBASE_API_KEY_MEDELLIN }}",
               authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN_MEDELLIN }}",

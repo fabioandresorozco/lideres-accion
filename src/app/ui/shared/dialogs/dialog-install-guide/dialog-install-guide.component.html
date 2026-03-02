@@ -21,8 +21,8 @@
                 iPhone / iPad
             </h3>
             <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
-                <li>Abre esta página en <strong>Safari</strong>.</li>
-                <li>Toca el botón <strong>Compartir</strong> <mat-icon
+                <li>Abre esta página en <strong>Safari O Chrome</strong>.</li>
+                <li>Toca el botón <strong>Compartir o añadir a inicio</strong> <mat-icon
                         class="align-middle scale-75 inline-block">ios_share</mat-icon> en la barra inferior.</li>
                 <li>Desliza y selecciona <strong>"Agregar al inicio"</strong> (Add to Home Screen).</li>
                 <li>Confirma tocando <strong>"Agregar"</strong>.</li>
@@ -30,7 +30,7 @@
         </div>
 
         <!-- Android/Other Instructions -->
-        <div *ngIf="data.platform !== 'IOS'" class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+        <div *ngIf="data.platform === 'ANDROID'" class="bg-gray-50 p-4 rounded-lg border border-gray-100">
             <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
                 <mat-icon class="text-gray-600 scale-75">android</mat-icon>
                 Android / Chrome
@@ -39,6 +39,19 @@
                 <li>Abre el menú del navegador (tres puntos ⋮).</li>
                 <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla
                         principal"</strong>.</li>
+                <li>Confirma la instalación.</li>
+            </ol>
+        </div>
+
+        <!-- Desktop Instructions -->
+        <div *ngIf="data.platform === 'DESKTOP'" class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+            <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                <mat-icon class="text-gray-600 scale-75">computer</mat-icon>
+                Escritorio / Chrome
+            </h3>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                <li>Busca el ícono de instalación <mat-icon class="align-middle scale-75 inline-block">install_desktop</mat-icon> en la barra de direcciones.</li>
+                <li>O abre el menú del navegador (tres puntos ⋮) y selecciona <strong>"Instalar aplicación"</strong>.</li>
                 <li>Confirma la instalación.</li>
             </ol>
         </div>

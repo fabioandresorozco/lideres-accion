@@ -1,8 +1,9 @@
 <button (click)="submit()" [disabled]="disabled || loading" [ngClass]="{
   'w-full h-10': size == 'big',
-'bg-yellow-600': type == 'submit' && !disabled && !loading,
-'hover:bg-yellow-800': type == 'submit' && !disabled && !loading,
-'text-white': type == 'submit' && !disabled && !loading,
+'bg-yellow-400': type == 'submit' && !disabled && !loading,
+'border-2 border-black': type == 'submit' && !disabled && !loading,
+'hover:bg-yellow-500': type == 'submit' && !disabled && !loading,
+'text-gray-900': type == 'submit' && !disabled && !loading,
 
 'hover:bg-gray-300': type == 'reset' && !disabled && !loading,
 'bg-white border border-gray-300': type == 'reset' && !disabled && !loading,
@@ -13,11 +14,11 @@
 'tracking-widest font-medium py-1 px-4 rounded-[18px] min-w-20 font-primary shadow-md transition-all duration-200 active:scale-95 ease-in-out': true
 }">
   <div class="flex justify-center items-center gap-2 w-full">
-    <span *ngIf="icon && !loading" class="material-symbols-outlined text-sm">{{icon}}</span>
+    <span *ngIf="icon && !loading" class="text-lg">{{icon}}</span>
     <span *ngIf="loading" class="material-symbols-outlined animate-spin">
       progress_activity
     </span>
     <span *ngIf="!loading" [ngClass]="{'text-lg': size == 'big', 'text-sm': size == 'small'}"
-      class="font-primary text-center">{{text}}</span>
+      class="font-primary text-center w-full font-semibold">{{text}}</span>
   </div>
 </button>

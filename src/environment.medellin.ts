@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  appVersion: '1.0.local',
   firebase: {
     apiKey: process.env['FIREBASE_API_KEY_MEDELLIN'],
     authDomain: process.env['FIREBASE_AUTH_DOMAIN_MEDELLIN'],

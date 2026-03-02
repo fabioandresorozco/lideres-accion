@@ -1,5 +1,7 @@
 export const environment = {
   production: false,
+  enableServiceWorker: false, // false en ng serve; true en cualquier entorno desplegado
+  appVersion: '1.0.local',
   firebase: {
     apiKey: 'AIzaSyClvFEPxZZf_q28kiipbROeHzsPbAAdlhk',
     authDomain: 'lida-dev-f9291.firebaseapp.com',

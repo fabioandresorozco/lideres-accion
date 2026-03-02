@@ -16,7 +16,7 @@ export class IconWhatsappComponent {
     get whatsappLink(): string {
         const baseUrl = 'https://wa.me/';
         const cleanPhone = this.phone?.replace(/[^0-9]/g, '');
-        let url = `${baseUrl}${cleanPhone}`;
+        let url = `${baseUrl}+57${cleanPhone}`;
 
         if (this.message) {
             url += `?text=${encodeURIComponent(this.message)}`;
